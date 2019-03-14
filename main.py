@@ -3,12 +3,13 @@
 import sys, os
 from pyltp import SentenceSplitter, Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
 
-class NlpProcess(object):
+# 创建一个类，用来进行NLP处理
+class LtpProcess(object):
 
     def __init__(self, content):
         self.content = content
 
-    def nlp(self):
+    def ltp(self):
 # 用拼接文件路径函数os.path.join()，形成本程序文件（main.py）所在的文件目录os.path.dirname(__file__)的上一级目录：/vagrant。
         ROOTDIR = os.path.join(os.path.dirname(__file__), os.pardir)
 # sys.path是python搜索模块的路径集，对象类型是list
