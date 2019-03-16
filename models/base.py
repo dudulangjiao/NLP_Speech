@@ -1,8 +1,12 @@
 # -*- coding: utf-8 -*-
 import sys, os
+sys.path.append('/var/lib')
+from pyltp import SentenceSplitter, Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
+
+# Set your own model path 设置模型路径
+MODELDIR = "/vagrant/software/ltp_data_v3.4.0"
 
 
-# 创建一个类，用来进行NLP处理
 class LtpProcess(object):
     """创建一个类，用来进行NLP处理。
 
@@ -14,27 +18,11 @@ class LtpProcess(object):
     def __init__(self, content):
         self.content = content
 
-    def ltp(self):
-        """创建ltp方法来处理文本"""
-        sys.path.append('/var/lib')
-        from pyltp import SentenceSplitter, Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
-
-        # Set your own model path 设置模型路径
-        MODELDIR = "/vagrant/software/ltp_data_v3.4.0"
-
-        # 变量paragrah保存要进行处理的文字段落。
-        paragraph = self.content
-
-        # 分句
-        sentence_list = SentenceSplitter.split(paragraph)
-        sentence = sentence_list[7]
-
-
+    def ltp_word(self, ok):
         # 分词
         segmentor = Segmentor()
         segmentor.load(os.path.join(MODELDIR, "cws.model"))
-        words = segmentor.segment(sentence)
-
+        words = segmentor.segment(ok)
         print("*************分词*****************")
         print("\t".join(words))
 
@@ -66,10 +54,35 @@ class LtpProcess(object):
         print("*************语义角色标注*************")
         for role in roles:
             print(role.index, "".join(
-                  ["%s:(%d,%d)" % (arg.name, arg.range.start, arg.range.end) for arg in role.arguments]))
+                ["%s:(%d,%d)" % (arg.name, arg.range.start, arg.range.end) for arg in role.arguments]))
 
         segmentor.release()
         postagger.release()
         parser.release()
         recognizer.release()
         labeller.release()
+
+        # 循环保存每一个词组
+        words_result = []  # 创建一个list，用来保存词处理结果
+        for y in words:
+            words_result.append(y)
+        return words_result
+
+    def ltp(self):
+        """创建ltp方法来处理文本"""
+
+        # 变量paragrah保存要进行处理的文字段落
+        paragraph = self.content
+
+        # 分句
+        sentence_list = SentenceSplitter.split(paragraph)
+
+        ltp_result = [[]]
+        x = 0
+        # 循环保存并处理每一句
+        for sentence in sentence_list:
+            x = x+1
+            jyh = self.ltp_word(sentence)
+            ltp_result.append(jyh)
+
+        return ltp_result
