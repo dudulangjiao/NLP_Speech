@@ -2,6 +2,7 @@
 import sys, os
 sys.path.append('/var/lib')
 from pyltp import SentenceSplitter, Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
+from models.other import list_conversion
 
 # Set your own model path 设置模型路径
 MODELDIR = "/vagrant/software/ltp_data_v3.4.0"
@@ -19,6 +20,7 @@ class LtpProcess(object):
         self.content = content
 
     def ltp_word(self, ok):
+        """创建一个方法，用来进行句子的分词、词性分析等处理。"""
         # 分词
         segmentor = Segmentor()
         segmentor.load(os.path.join(MODELDIR, "cws.model"))
@@ -31,6 +33,7 @@ class LtpProcess(object):
         postagger.load(os.path.join(MODELDIR, "pos.model"))
         postags = postagger.postag(words)
         print("*************词性标注*************")
+        print(type(postags))
         print("\t".join(postags))
 
         # 依存句法分析
@@ -38,7 +41,15 @@ class LtpProcess(object):
         parser.load(os.path.join(MODELDIR, "parser.model"))
         arcs = parser.parse(words, postags)
         print("*************依存句法分析*************")
+        print(type(arcs))
         print("\t".join("%d:%s" % (arc.head, arc.relation) for arc in arcs))
+
+        # 把依存句法分析结果的head和relation分离出来
+        arcs_head = []
+        arcs_relation = []
+        for arc in arcs:
+            arcs_head.append(arc.head)
+            arcs_relation.append(arc.relation)
 
         # 命名实体识别
         recognizer = NamedEntityRecognizer()
@@ -62,11 +73,11 @@ class LtpProcess(object):
         recognizer.release()
         labeller.release()
 
-        # 循环保存每一个词组
-        words_result = []  # 创建一个list，用来保存词处理结果
-        for y in words:
-            words_result.append(y)
+        #返回一个二维列表
+        words_result = [words, postags, netags, arcs_head, arcs_relation]
+
         return words_result
+
 
     def ltp(self):
         """创建ltp方法来处理文本"""
@@ -77,12 +88,15 @@ class LtpProcess(object):
         # 分句
         sentence_list = SentenceSplitter.split(paragraph)
 
-        ltp_result = [[]]
-        x = 0
         # 循环保存并处理每一句
+        ltp_result = []  # 处理结果
+        sen_id_of_word_int = 0  # 词组所属的句子id
         for sentence in sentence_list:
-            x = x+1
-            jyh = self.ltp_word(sentence)
-            ltp_result.append(jyh)
+            sen_id_of_word_int = sen_id_of_word_int + 1
+            ltp_word_result = self.ltp_word(sentence)  # 调用ltp_word方法对句子进行分词、词性分析等处理
+            #print('ltp_word_result')
+            #print(ltp_word_result)
+            list_conversion_result = list_conversion(ltp_word_result, sen_id_of_word_int)  # 调用list_conversion函数，把列表结构转化
+            ltp_result = ltp_result + list_conversion_result  # 循环累加处理结果
 
         return ltp_result
