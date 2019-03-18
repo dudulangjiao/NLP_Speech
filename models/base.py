@@ -89,14 +89,15 @@ class LtpProcess(object):
         sentence_list = SentenceSplitter.split(paragraph)
 
         # 循环保存并处理每一句
-        ltp_result = []  # 处理结果
+        ltp_result = []  # 分词、词性分析等处理结果
         sen_id_of_word_int = 0  # 词组所属的句子id
         for sentence in sentence_list:
+
             sen_id_of_word_int = sen_id_of_word_int + 1
             ltp_word_result = self.ltp_word(sentence)  # 调用ltp_word方法对句子进行分词、词性分析等处理
             #print('ltp_word_result')
             #print(ltp_word_result)
             list_conversion_result = list_conversion(ltp_word_result, sen_id_of_word_int)  # 调用list_conversion函数，把列表结构转化
-            ltp_result = ltp_result + list_conversion_result  # 循环累加处理结果
+            ltp_result_w = ltp_result + list_conversion_result  # 循环累加处理结果
 
-        return ltp_result
+        return sentence_list, ltp_result
