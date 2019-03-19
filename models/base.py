@@ -98,6 +98,6 @@ class LtpProcess(object):
             #print('ltp_word_result')
             #print(ltp_word_result)
             list_conversion_result = list_conversion(ltp_word_result, sen_id_of_word_int)  # 调用list_conversion函数，把列表结构转化
-            ltp_result_w = ltp_result + list_conversion_result  # 循环累加处理结果
+            ltp_result = ltp_result + list_conversion_result  # 循环累加处理结果
 
         return sentence_list, ltp_result

@@ -18,7 +18,7 @@ def main():
     cursor.execute(count_row_speech)
     row_no_dict = cursor.fetchone()
     row_no = row_no_dict['COUNT(speech_id)']
-
+    row_no = 1
     # 循环读取稿子
     sen_id = 0  # 设置句子表的句子id计数器
     for sp_id in range(row_no):
@@ -26,15 +26,16 @@ def main():
 
         query_speech = ('SELECT speech_content FROM speech_sheet WHERE speech_id = {0}').format(sp_id)
         cursor.execute(query_speech)
-        outcome = cursor.fetchall()
-        #print(type(outcome))
-        data_speech_str = str(outcome[0])
+        outcome = cursor.fetchone()
+        print(type(outcome))
+        data_speech_str = str(outcome['speech_content'])
         #调用函数删除“\n”“■”和空格
         data_speech = process_page(data_speech_str)
         print(data_speech)
 
-        # data_speech = '中共中央总书记、国家主席、中央军委主席习近平在开班式上发表重要讲话强调，培养选拔优秀年轻干部是一件大事，关乎党的命运、国家的命运、民族的命运、人民的福祉，是百年大计。中共中央政治局常委、中央书记处书记王沪宁出席开班式。谢谢大家！'
+        #data_speech = '新华社北京3月1日电（记者吴晶、姜潇）2019年春季学期中央党校（国家行政学院）中青年干部培训班1日上午在中央党校开班。中共中央总书记、国家主席、中央军委主席习近平在开班式上发表重要讲话强调，培养选拔优秀年轻干部是一件大事，关乎党的命运、国家的命运、民族的命运、人民的福祉，是百年大计。'
         # 创建LtpProcess()实例，进行分句、分词、词性分析等一系列处理
+
         ltp_speech = LtpProcess(data_speech)
         sentence_result, word_result = ltp_speech.ltp()  # sentence_result类型是一维列表, word_result类型是二维列表
 
