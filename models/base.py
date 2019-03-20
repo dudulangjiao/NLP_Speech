@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import sys, os
-sys.path.append('/var/lib')
+sys.path.append('/usr/local/lib/python3.5/dist-packages')
+#ROOTDIR = os.path.join(os.path.dirname(__file__), os.pardir)
+#sys.path = [os.path.join(ROOTDIR, "lib")] + sys.path
+
 from pyltp import SentenceSplitter, Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
 from models.other import list_conversion
 
@@ -58,6 +61,7 @@ class LtpProcess(object):
         print("*************命名实体识别*************")
         print("\t".join(netags))
 
+        """
         # 语义角色标注
         labeller = SementicRoleLabeller()
         labeller.load(os.path.join(MODELDIR, "pisrl.model"))
@@ -66,12 +70,13 @@ class LtpProcess(object):
         for role in roles:
             print(role.index, "".join(
                 ["%s:(%d,%d)" % (arg.name, arg.range.start, arg.range.end) for arg in role.arguments]))
+        """
 
         segmentor.release()
         postagger.release()
         parser.release()
         recognizer.release()
-        labeller.release()
+        #labeller.release()
 
         #返回一个二维列表
         words_result = [words, postags, netags, arcs_head, arcs_relation]

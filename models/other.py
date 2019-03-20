@@ -8,12 +8,10 @@ def process_page(page_content):
     remove_n = re.compile('\\\\n')  # 去除换行符\n
     remove_square = re.compile('■')  # 去除■
     remove_space = re.compile(' ')  # 去除空格
-    #remove_bracket = re.compile('\（|\）')  # 去除括号
 
     page_content = remove_n.sub('', page_content)
     page_content = remove_square.sub('', page_content)
     page_content = remove_space.sub('', page_content)
-    #page_content = remove_bracket.sub('', page_content)
 
     return page_content
 

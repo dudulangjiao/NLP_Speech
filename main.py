@@ -5,6 +5,7 @@ from models.base import LtpProcess
 from models.other import process_page
 import mysql.connector
 
+
 def main():
     """从讲稿数据库取出文本内容，交给ltp处理。"""
 
@@ -20,7 +21,8 @@ def main():
     row_no = row_no_dict['COUNT(speech_id)']
     row_no = 1
     # 循环读取稿子
-    sen_id = 0  # 设置句子表的句子id计数器
+    sen_id = 0  # 设置句子表speech_content的句子ID(主键)
+    w_id = 0  # 设置词组表word_sheet的词组ID（主键）
     for sp_id in range(row_no):
         sp_id = sp_id + 1    # 讲稿id
 
@@ -49,15 +51,21 @@ def main():
             cursor.execute(insert_sentence)
             cnx.commit()
 
-        """
+
         # 循环读取分词、词性标记等，存入word_sheet表
-        wor_id = 0
         for w_list in word_result:
-            wor_id = wor_id +1
-            insert_word = ("INSERT INTO word_sheet (word_id, sentence_id_of_word, ) VALUE ({0}, '{1}')").format(sen_id, sen_re_str)
-        """
-        cursor.close()
-        cnx.close()
+            w_id = w_id +1
+            insert_word = ("INSERT INTO word_sheet (word_id, sentence_id_of_word, word_content, part_speech_tag_word,"
+                           "named_entity_tag_word, depend_synta_head_word, depend_synta_tag_word)"
+                           "VALUE ({0}, {1}, '{2}', '{3}', '{4}', {5}, '{6}')").format(w_id, w_list[0], w_list[1],
+                                                                                       w_list[2], w_list[3], w_list[4],
+                                                                                       w_list[5])
+            cursor.execute(insert_word)
+            cnx.commit()
+
+    cursor.close()
+    cnx.close()
+
 
 if __name__ == '__main__':
     main()
