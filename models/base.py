@@ -4,7 +4,7 @@ sys.path.append('/usr/local/lib/python3.5/dist-packages')
 #ROOTDIR = os.path.join(os.path.dirname(__file__), os.pardir)
 #sys.path = [os.path.join(ROOTDIR, "lib")] + sys.path
 
-from pyltp import SentenceSplitter, Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
+from pyltp import Segmentor, Postagger, Parser, NamedEntityRecognizer, SementicRoleLabeller
 from models.other import list_conversion
 
 # Set your own model path 设置模型路径
@@ -22,30 +22,30 @@ class LtpProcess(object):
     def __init__(self, content):
         self.content = content
 
-    def ltp_word(self, ok):
+    def ltp_word(self):
         """创建一个方法，用来进行句子的分词、词性分析等处理。"""
         # 分词
         segmentor = Segmentor()
         segmentor.load(os.path.join(MODELDIR, "cws.model"))
-        words = segmentor.segment(ok)
-        print("*************分词*****************")
-        print("\t".join(words))
+        words = segmentor.segment(self.content)
+        #print("*************分词*****************")
+        #print("\t".join(words))
 
         # 词性标注
         postagger = Postagger()
         postagger.load(os.path.join(MODELDIR, "pos.model"))
         postags = postagger.postag(words)
-        print("*************词性标注*************")
-        print(type(postags))
-        print("\t".join(postags))
+        #print("*************词性标注*************")
+        #print(type(postags))
+        #print("\t".join(postags))
 
         # 依存句法分析
         parser = Parser()
         parser.load(os.path.join(MODELDIR, "parser.model"))
         arcs = parser.parse(words, postags)
-        print("*************依存句法分析*************")
-        print(type(arcs))
-        print("\t".join("%d:%s" % (arc.head, arc.relation) for arc in arcs))
+        #print("*************依存句法分析*************")
+        #print(type(arcs))
+        #print("\t".join("%d:%s" % (arc.head, arc.relation) for arc in arcs))
 
         # 把依存句法分析结果的head和relation分离出来
         arcs_head = []
@@ -58,8 +58,8 @@ class LtpProcess(object):
         recognizer = NamedEntityRecognizer()
         recognizer.load(os.path.join(MODELDIR, "ner.model"))
         netags = recognizer.recognize(words, postags)
-        print("*************命名实体识别*************")
-        print("\t".join(netags))
+        #print("*************命名实体识别*************")
+        #print("\t".join(netags))
 
         """
         # 语义角色标注
@@ -80,29 +80,6 @@ class LtpProcess(object):
 
         #返回一个二维列表
         words_result = [words, postags, netags, arcs_head, arcs_relation]
+        words_result = list_conversion(words_result)  # 调用list_conversion函数，把列表结构转化
 
         return words_result
-
-
-    def ltp(self):
-        """创建ltp方法来处理文本"""
-
-        # 变量paragrah保存要进行处理的文字段落
-        paragraph = self.content
-
-        # 分句
-        sentence_list = SentenceSplitter.split(paragraph)
-
-        # 循环保存并处理每一句
-        ltp_result = []  # 分词、词性分析等处理结果
-        sen_id_of_word_int = 0  # 词组所属的句子id
-        for sentence in sentence_list:
-
-            sen_id_of_word_int = sen_id_of_word_int + 1
-            ltp_word_result = self.ltp_word(sentence)  # 调用ltp_word方法对句子进行分词、词性分析等处理
-            #print('ltp_word_result')
-            #print(ltp_word_result)
-            list_conversion_result = list_conversion(ltp_word_result, sen_id_of_word_int)  # 调用list_conversion函数，把列表结构转化
-            ltp_result = ltp_result + list_conversion_result  # 循环累加处理结果
-
-        return sentence_list, ltp_result

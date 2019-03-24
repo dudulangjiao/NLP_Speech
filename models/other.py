@@ -15,16 +15,15 @@ def process_page(page_content):
 
     return page_content
 
-def list_conversion(list_content, sentence_id_word):
+def list_conversion(list_content):
     """创建一个函数，用来转化二维列表结构。
 
     把[[1, 2, 3],['a', 'b', 'c'],['e', 'f', 'g']] 列表结构
     转化为：[[1, a, e],['2', 'b', 'e'],['3', 'c', 'g']] 列表结构
-    并加入一个id列
 
     """
     x = len(list_content[0])
-    list_conversion_result = [[sentence_id_word] for i in range(x)]
+    list_conversion_result = [[] for i in range(x)]
     #print(list_conversion_result)
 
     for v in list_content:
