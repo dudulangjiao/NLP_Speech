@@ -9,6 +9,7 @@ import time
 
 def main():
     """从讲稿数据库取出文本内容，交给ltp处理。"""
+    print('程序开始运行......')
     time_start_main = time.time()
     cnx = mysql.connector.connect(user='root', password='314159',
                                   host='localhost',
@@ -35,7 +36,6 @@ def main():
         data_speech = process_page(data_speech_str)
         #print(data_speech)
 
-        #data_speech = '新华社北京3月1日电（记者吴晶、姜潇）2019年春季学期中央党校（国家行政学院）中青年干部培训班1日上午在中央党校开班。中共中央总书记、国家主席、中央军委主席习近平在开班式上发表重要讲话强调，培养选拔优秀年轻干部是一件大事，关乎党的命运、国家的命运、民族的命运、人民的福祉，是百年大计。'
         # 创建LtpProcess()实例，进行分句、分词、词性分析等一系列处理
         sentence_list = SentenceSplitter.split(data_speech)
 

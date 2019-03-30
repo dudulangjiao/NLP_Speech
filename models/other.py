@@ -15,18 +15,18 @@ def process_page(page_content):
 
     return page_content
 
-def list_conversion(list_content):
+def list_conversion(*args):
     """创建一个函数，用来转化二维列表结构。
 
-    把[[1, 2, 3],['a', 'b', 'c'],['e', 'f', 'g']] 列表结构
+    把([1, 2, 3],['a', 'b', 'c'],['e', 'f', 'g']) 数组结构
     转化为：[[1, a, e],['2', 'b', 'e'],['3', 'c', 'g']] 列表结构
 
     """
-    x = len(list_content[0])
+    x = len(args[0])
     list_conversion_result = [[] for i in range(x)]
     #print(list_conversion_result)
 
-    for v in list_content:
+    for v in args:
         u = 0
         for y in v:
 

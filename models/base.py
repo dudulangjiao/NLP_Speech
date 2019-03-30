@@ -78,8 +78,7 @@ class LtpProcess(object):
         recognizer.release()
         #labeller.release()
 
-        #返回一个二维列表
-        words_result = [words, postags, netags, arcs_head, arcs_relation]
-        words_result = list_conversion(words_result)  # 调用list_conversion函数，把列表结构转化
+        # 调用list_conversion函数，把处理结果列表化
+        words_result = list_conversion(words, postags, netags, arcs_head, arcs_relation)
 
         return words_result
