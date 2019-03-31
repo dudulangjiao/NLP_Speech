@@ -36,3 +36,24 @@ def list_conversion(*args):
             #print(list_conversion_result)
 
     return list_conversion_result
+
+
+def get_sql():
+    """创建一个函数，用来对sql脚本文件进行逐行读取，去除注释行，并用dict类型进行保存"""
+    cr_ta_sql = open('/vagrant/software/creat_table.sql', mode='r')
+    sql = {}
+    count = 1
+    str_sql = str()
+    for line in cr_ta_sql.readlines():
+        if line.strip().startswith('#'): continue
+        if line.strip().endswith(";"):
+
+            #print('************************')
+            #print(line)
+            sql[count] = str_sql + line
+            str_sql = ''
+            count = count + 1
+        else:
+            str_sql = str_sql + line
+    cr_ta_sql.close()
+    return sql
